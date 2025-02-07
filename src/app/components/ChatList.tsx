@@ -3,8 +3,14 @@ import { useEditChatName } from "@/app/hooks/use-edit-name-chat";
 import { useDeleteChat } from "@/app/hooks/use-delete-chat";
 import ChatMenu from "./ChatMenu";
 
+type Chat = {
+    ID: number;
+    name: string;
+    UpdatedAt: string;
+};
+
 type ChatListProps = {
-    chats: { ID: number; name: string }[];
+    chats: Chat[];
     loading: boolean;
     error: Error | null;
     onSelectChat: (chatId: number) => void;
@@ -35,9 +41,11 @@ export default function ChatList({ chats, loading, error, onSelectChat, refreshC
     if (error) return <p className="text-red-500">Erreur : {error.message}</p>;
     if (chats.length === 0) return <p className="text-gray-400">Aucun chat</p>;
 
+    const sortedChats = [...chats].sort((a, b) => new Date(b.UpdatedAt).getTime() - new Date(a.UpdatedAt).getTime());
+
     return (
         <ul className="space-y-2 relative">
-            {chats.map((chat) => (
+            {sortedChats.map((chat) => (
                 <li
                     key={chat.ID}
                     className="relative p-2 bg-gray-800 hover:bg-gray-700 cursor-pointer rounded flex justify-between"

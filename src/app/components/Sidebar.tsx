@@ -39,6 +39,15 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
 				{isOpen && (
 					<div className="flex-1 m-2">
 						<h2 className="p-4 border-b border-gray-800">Historique</h2>
+						{session && (
+							<button
+								className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded my-3"
+								disabled={creatingChat}
+								onClick={handleCreateChat}
+							>
+								{creatingChat ? "Création..." : "+ Nouveau Chat"}
+							</button>
+						)}
 
 						<ChatList
 							chats={chats}
@@ -47,16 +56,6 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
 							onSelectChat={onSelectChat}
 							refreshChats={fetchChats}
 						/>
-
-						{session && (
-							<button
-								className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded mt-4"
-								disabled={creatingChat}
-								onClick={handleCreateChat}
-							>
-								{creatingChat ? "Création..." : "+ Nouveau Chat"}
-							</button>
-						)}
 					</div>
 				)}
 
