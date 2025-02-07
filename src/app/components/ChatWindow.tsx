@@ -18,7 +18,7 @@ export default function ChatWindow({ chatId }: ChatWindowProps) {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-7/12">
       <div className="flex-1 overflow-auto p-4">
         {loading && <div className="text-center">Chargement...</div>}
         {error && <div className="text-red-500 text-center">{error.message}</div>}

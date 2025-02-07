@@ -34,16 +34,35 @@ export const chatService = {
     }
     return response.json()
   },
-  async sendMessage(chatId: number, message: string): Promise<void> {
+  async sendMessage(chatId: number, prompt: string): Promise<string> {
     const response = await fetch('http://108.129.182.218:3001' + `/chats/${chatId}/message`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message })
-    })
+      body: JSON.stringify({ prompt }),
+    });
+
     if (!response.ok) {
-      throw new Error('Failed to send message')
+      throw new Error('Failed to send message');
     }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    let assistantMessage = '';
+
+    if (!reader) {
+      throw new Error('Failed to read response stream');
+    }
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      assistantMessage += decoder.decode(value, { stream: true });
+    }
+
+    return assistantMessage;
   }
-}
+};
+

@@ -31,11 +31,11 @@ export function useChatMessages(chatId: number) {
       setMessages((prev) => [...prev, { role: "user", content: message }]);
 
       try {
-        await chatService.sendMessage(chatId, message);
+        const assistantMessage = await chatService.sendMessage(chatId, message);
 
-        setTimeout(() => {
-          setMessages((prev) => [...prev, { role: "assistant", content: "Réponse en attente..." }]);
-        }, 1000);
+        // Une fois la réponse complète de l'IA obtenue, on ajoute le message complet
+        setMessages((prev) => [...prev, { role: "assistant", content: assistantMessage }]);
+
       } catch (err) {
         setError(err instanceof Error ? err : new Error(String(err)));
       }
