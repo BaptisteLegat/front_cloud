@@ -1,13 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import Sidebar from "@/app/components/Sidebar";
 import ChatWindow from "@/app/components/ChatWindow";
+import { useCreateChat } from "@/app/hooks/use-create-chat";
 
 export default function Home() {
   const { data: session } = useSession();
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+  const { createChat, loading: creatingChat } = useCreateChat();
+
+  const handleCreateChat = async () => {
+    const newChat = await createChat();
+    if (newChat) {
+      setSelectedChatId(newChat.ID);
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -21,8 +30,12 @@ export default function Home() {
             <p className="text-gray-400 mb-6">
               Créez un nouveau chat pour commencer la conversation.
             </p>
-            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg">
-              + Nouveau Chat
+            <button
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg"
+              onClick={handleCreateChat}
+              disabled={creatingChat}
+            >
+              {creatingChat ? "Création..." : "+ Nouveau Chat"}
             </button>
           </div>
         ) : (
@@ -31,7 +44,7 @@ export default function Home() {
             <p className="text-gray-400 mb-6">
               Connectez-vous pour discuter et retrouver votre historique.
             </p>
-            <button className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-lg">
+            <button className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-lg" onClick={() => signIn()}>
               Se connecter
             </button>
           </div>

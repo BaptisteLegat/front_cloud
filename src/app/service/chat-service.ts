@@ -1,7 +1,7 @@
 
 export type Chat = {
-  id: number
-  updatedAt: string
+  ID: number
+  UpdatedAt: string
   name: string
   messages: object[]
 }
