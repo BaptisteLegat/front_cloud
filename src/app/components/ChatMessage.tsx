@@ -1,5 +1,5 @@
 type ChatMessageProps = {
-    role: "user" | "bot";
+    role: "user" | "assistant";
     message: string;
 };
 

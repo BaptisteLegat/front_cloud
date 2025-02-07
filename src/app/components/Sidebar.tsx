@@ -1,51 +1,74 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useChats } from "@/app/hooks/use-chats";
+import { useCreateChat } from "@/app/hooks/use-create-chat";
 import Auth from "./Auth";
 
-const conversations = [
-  { id: 1, title: "Discussion 1" },
-  { id: 2, title: "Discussion 2" },
-  { id: 3, title: "Discussion 3" },
-];
+type SidebarProps = {
+  onSelectChat: (chatId: number) => void;
+};
 
-export default function Sidebar() {
-  const [activeChat, setActiveChat] = useState<number | null>(null);
+export default function Sidebar({ onSelectChat }: SidebarProps) {
+  const { chats, loading, error, fetchChats } = useChats();
+  const { createChat, loading: creatingChat } = useCreateChat();
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    fetchChats();
+  }, [fetchChats]);
+
+  const handleCreateChat = async () => {
+    const newChat = await createChat();
+    if (newChat) {
+      fetchChats();
+      onSelectChat(newChat.id);
+    }
+  };
+
+  console.log(chats);
 
   return (
     <div className="flex">
-        <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2 bg-gray-800 text-white"
-        >
-            {isOpen ? "◀" : "▶"}
-        </button>
+      <button onClick={() => setIsOpen(!isOpen)} className="p-2 bg-gray-800 text-white">
+        {isOpen ? "◀" : "▶"}
+      </button>
 
-        {isOpen && (
-            <div className="w-64 h-screen bg-gray-900 text-white p-4 flex flex-col transition-all duration-300">
-            <h2 className="text-lg font-semibold mb-4">Historique</h2>
+      {isOpen && (
+        <div className="w-64 h-screen bg-gray-900 text-white p-4 flex flex-col transition-all duration-300">
+          <h2 className="text-lg font-semibold mb-4">Historique</h2>
 
+          {loading ? (
+            <p className="text-gray-400">Chargement...</p>
+          ) : error ? (
+            <p className="text-red-500">Erreur : {error.message}</p>
+          ) : chats.length === 0 ? (
+            <p className="text-gray-400">Aucun chat</p>
+          ) : (
             <ul className="flex-1 space-y-2">
-                {conversations.map((chat) => (
+              {chats.map((chat) => (
                 <li
-                    key={chat.id}
-                    className={`p-2 rounded cursor-pointer ${
-                    activeChat === chat.id ? "bg-gray-700" : "hover:bg-gray-800"
-                    }`}
-                    onClick={() => setActiveChat(chat.id)}
+                  key={chat.id}
+                  className="p-2 rounded cursor-pointer hover:bg-gray-800"
+                  onClick={() => onSelectChat(chat.id)}
                 >
-                    {chat.title}
+                  {chat.name}
                 </li>
-                ))}
+              ))}
             </ul>
+          )}
 
-            <button className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded">
-                + Nouveau Chat
-            </button>
+          <button
+            onClick={handleCreateChat}
+            className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded"
+            disabled={creatingChat}
+          >
+            {creatingChat ? "Création..." : "+ Nouveau Chat"}
+          </button>
 
-            <Auth />
-            </div>
-        )}
+          <Auth />
+        </div>
+      )}
     </div>
   );
 }

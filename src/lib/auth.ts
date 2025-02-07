@@ -1,8 +1,8 @@
 import NextAuth from "next-auth"
 import CognitoProvider from "next-auth/providers/cognito"
+import { jwtDecode } from "jwt-decode"
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
-    // Configure one or more authentication providers
     providers: [
         CognitoProvider({
             clientId: process.env.COGNITO_CLIENT_ID || "",
@@ -25,7 +25,13 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             if (account) {
                 token.accessToken = account.access_token;
                 token.idToken = account.id_token;
+
+                if (account?.id_token) {
+                    const decoded = jwtDecode<{ sub: string }>(account.id_token);
+                    token.userId = decoded.sub;
+                }
             }
+
             return token;
         },
         async session({session, token}) {
@@ -33,6 +39,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             session.accessToken = token.accessToken;
             // @ts-expect-error phpstorm
             session.idToken = token.idToken;
+            session.user = {
+                ...session.user,
+                id: token.userId as string,
+            };
+
             return session;
         },
     },
