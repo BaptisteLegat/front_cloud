@@ -37,6 +37,15 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
         {isOpen && (
           <div className="flex-1 m-2">
             <h2 className="p-4 border-b border-gray-800">Historique</h2>
+            {session ? (
+                <button
+                    onClick={handleCreateChat}
+                    className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded mt-4"
+                    disabled={creatingChat}
+                >
+                  {creatingChat ? "Création..." : "+ Nouveau Chat"}
+                </button>
+            ) : null}
 
             {loading ? (
               <p className="text-gray-400">Chargement...</p>
@@ -59,16 +68,6 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                 </ul>
               </div>
             )}
-
-            {session ? (
-              <button
-                onClick={handleCreateChat}
-                className="w-full p-2 bg-blue-600 hover:bg-blue-700 rounded mt-4"
-                disabled={creatingChat}
-              >
-                {creatingChat ? "Création..." : "+ Nouveau Chat"}
-              </button>
-            ) : null}
           </div>
         )}
 

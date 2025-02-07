@@ -8,21 +8,21 @@ export type Chat = {
 
 export const chatService = {
   async getChat(chatId: string): Promise<Chat> {
-    const response = await fetch('http://108.129.182.218:3001' + `/chats/${chatId}`)
+    const response = await fetch(`${process.env.API_URL}` + `/chats/${chatId}`)
     if (!response.ok) {
       throw new Error('Failed to fetch chat')
     }
     return response.json()
   },
   async getChats(userId: string): Promise<Chat[]> {
-    const response = await fetch('http://108.129.182.218:3001' + `/chats/user/${userId}`)
+    const response = await fetch(`${process.env.API_URL}` + `/chats/user/${userId}`)
     if (!response.ok) {
       throw new Error('Failed to fetch chats')
     }
     return response.json()
   },
   async createChat(userId: string, name?: string): Promise<Chat> {
-    const response = await fetch('http://108.129.182.218:3001' + `/chats/${userId}`, {
+    const response = await fetch(`${process.env.API_URL}` + `/chats/${userId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -35,7 +35,7 @@ export const chatService = {
     return response.json()
   },
   async sendMessage(chatId: number, prompt: string): Promise<string> {
-    const response = await fetch('http://108.129.182.218:3001' + `/chats/${chatId}/message`, {
+    const response = await fetch(`${process.env.API_URL}` + `/chats/${chatId}/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

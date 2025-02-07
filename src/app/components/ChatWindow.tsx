@@ -36,6 +36,7 @@ export default function ChatWindow({ chatId }: ChatWindowProps) {
       </div>
       <div className="p-4 bg-gray-900 flex items-center">
         <input
+          onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           type="text"
           className="w-full p-2 rounded bg-gray-800 text-white focus:outline-none"
           placeholder="Écrivez un message..."
