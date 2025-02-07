@@ -21,7 +21,7 @@ export const chatService = {
     }
     return response.json()
   },
-  async createChat(userId: string, name?: string): Promise<Chat> {
+  async createChat(userId: string): Promise<Chat> {
     const response = await fetch(`${process.env.API_URL}` + `/chats/${userId}`, {
       method: 'POST',
       headers: {
@@ -63,6 +63,32 @@ export const chatService = {
     }
 
     return assistantMessage;
+  },
+  async editChatName(chatId: number, name: string): Promise<void> {
+    const response = await fetch('http://108.129.182.218:3001' + `/chats/${chatId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to edit chat name');
+    }
+
+    return;
+  },
+  async deleteChat(chatId: number): Promise<void> {
+    const response = await fetch('http://108.129.182.218:3001' + `/chats/${chatId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete chat');
+    }
+
+    return;
   }
 };
 

@@ -9,12 +9,12 @@ export function useCreateChat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createChat = useCallback(async (name?: string) => {
+  const createChat = useCallback(async () => {
     if (!session?.user?.id) return;
 
     setLoading(true);
     try {
-      const newChat = await chatService.createChat(session.user.id, name);
+      const newChat = await chatService.createChat(session.user.id);
       return newChat;
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
